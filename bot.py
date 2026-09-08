@@ -1,22 +1,36 @@
-from client import app, call
+import asyncio
+
+from pyrogram import idle
+
+from client import app, user, call
 
 
 async def main():
-    print("🎵 Music Bot is starting...")
+    print("🎵 Starting Music Bot...")
 
+    # Start bot account
     await app.start()
+    print("🤖 Bot started")
+
+    # Start user account
+    await user.start()
+    print("👤 User account started")
+
+    # Start PyTgCalls
     await call.start()
+    print("🎧 Voice Chat client started")
 
     me = await app.get_me()
+    print(f"✅ Running as @{me.username or me.first_name}")
 
-    print(f"✅ Bot started: @{me.username}")
-    print("🎧 PyTgCalls started")
-    print("🚀 Music bot is running...")
+    # Keep everything running
+    await idle()
 
-    await app.idle()
+    # Stop everything when the process exits
+    await call.stop()
+    await user.stop()
+    await app.stop()
 
 
 if __name__ == "__main__":
-    import asyncio
-
     asyncio.run(main())
