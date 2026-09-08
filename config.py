@@ -1,66 +1,31 @@
 import os
 
-# =========================
-# Required configuration
-# =========================
-
+# Telegram API credentials
 API_ID = int(os.getenv("API_ID", "0"))
 API_HASH = os.getenv("API_HASH", "")
+
+# Telegram Bot Token
 BOT_TOKEN = os.getenv("BOT_TOKEN", "")
+
+# Telegram User Session String
 SESSION_STRING = os.getenv("SESSION_STRING", "")
 
-# =========================
-# Ownership / access control
-# =========================
-
+# Your Telegram user ID
 OWNER_ID = int(os.getenv("OWNER_ID", "0"))
 
-# Comma-separated Telegram user IDs
-# Example: SUDO_USERS="123456789,987654321"
-SUDO_USERS = [
-    int(user_id.strip())
-    for user_id in os.getenv("SUDO_USERS", "").split(",")
-    if user_id.strip()
-]
 
-# =========================
-# Storage
-# =========================
+# Basic validation
+if not API_ID:
+    raise RuntimeError("API_ID is missing")
 
-DB_FILE = os.path.join(
-    os.path.dirname(__file__),
-    "data.json"
-)
+if not API_HASH:
+    raise RuntimeError("API_HASH is missing")
 
-# =========================
-# Clone system
-# =========================
+if not BOT_TOKEN:
+    raise RuntimeError("BOT_TOKEN is missing")
 
-CLONE_ONLY_OWNER = os.getenv(
-    "CLONE_ONLY_OWNER",
-    "true"
-).lower() == "true"
+if not SESSION_STRING:
+    raise RuntimeError("SESSION_STRING is missing")
 
-
-# =========================
-# Configuration validation
-# =========================
-
-required_values = {
-    "API_ID": API_ID,
-    "API_HASH": API_HASH,
-    "BOT_TOKEN": BOT_TOKEN,
-    "SESSION_STRING": SESSION_STRING,
-    "OWNER_ID": OWNER_ID,
-}
-
-missing = [
-    name for name, value in required_values.items()
-    if not value
-]
-
-if missing:
-    raise RuntimeError(
-        "Missing required environment variables: "
-        + ", ".join(missing)
-    )
+if not OWNER_ID:
+    raise RuntimeError("OWNER_ID is missing")
