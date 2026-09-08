@@ -1,16 +1,66 @@
 import os
 
-# ==== Required ====
-API_ID = 30437466
-API_HASH = "bc8aea5d1b85cb3c7291e3d3ce0ac4ad"
-BOT_TOKEN = "8133529152:AAF7m1vxF-ea4a3VqmRYZPn-N-BTmp3wkXM"
-SESSION_STRING = "AQHQcFoAvErLYzbAy6ugBgTcZWygIPWbq_wNd5KdeqOrs6P0CIS46kHM6DqzXj_5FSC9d6ymmz6Ucqu5l3Ki2olvkBnFj--SC56VkUnXtlyve8eEOWr8b6XxXIS2hc5xewo3GgOQj4JpzruEQZ3EIzG18zbOWmJY_iiwPZCcCHPoUuTx3epeWws-KzcZFhqxJxnagMllSxW3nbKRZJsV8es3NYGABQciO08yJGIuRaIY-gf_wCVhcbv8a_XJjn3aqaStvM0WZT80xAB2POk-0SIiX1FEk9FbjdJmJmM9hkbKsg5OcLHy3_7T0xGsmvCosTeXS6tVzHewgqWnTKVcKXVGE2p2VgAAAAHPRbOqAA"
-# ==== Ownership / access control ====
-OWNER_ID = 7880781069
-SUDO_USERS = []
+# =========================
+# Required configuration
+# =========================
 
-# ==== Storage ====
-DB_FILE = os.path.join(os.path.dirname(__file__), "data.json")
+API_ID = int(os.getenv("API_ID", "0"))
+API_HASH = os.getenv("API_HASH", "")
+BOT_TOKEN = os.getenv("BOT_TOKEN", "")
+SESSION_STRING = os.getenv("SESSION_STRING", "")
 
-# ==== Clone system ====
-CLONE_ONLY_OWNER = True
+# =========================
+# Ownership / access control
+# =========================
+
+OWNER_ID = int(os.getenv("OWNER_ID", "0"))
+
+# Comma-separated Telegram user IDs
+# Example: SUDO_USERS="123456789,987654321"
+SUDO_USERS = [
+    int(user_id.strip())
+    for user_id in os.getenv("SUDO_USERS", "").split(",")
+    if user_id.strip()
+]
+
+# =========================
+# Storage
+# =========================
+
+DB_FILE = os.path.join(
+    os.path.dirname(__file__),
+    "data.json"
+)
+
+# =========================
+# Clone system
+# =========================
+
+CLONE_ONLY_OWNER = os.getenv(
+    "CLONE_ONLY_OWNER",
+    "true"
+).lower() == "true"
+
+
+# =========================
+# Configuration validation
+# =========================
+
+required_values = {
+    "API_ID": API_ID,
+    "API_HASH": API_HASH,
+    "BOT_TOKEN": BOT_TOKEN,
+    "SESSION_STRING": SESSION_STRING,
+    "OWNER_ID": OWNER_ID,
+}
+
+missing = [
+    name for name, value in required_values.items()
+    if not value
+]
+
+if missing:
+    raise RuntimeError(
+        "Missing required environment variables: "
+        + ", ".join(missing)
+    )
