@@ -1,25 +1,29 @@
 import os
-
-from pyrogram import Client
 import pyrogram.errors
 
 
 # ─────────────────────────────────────────────
-# PyTgCalls compatibility fix
+# PyTgCalls / Pyrogram compatibility
 # ─────────────────────────────────────────────
 
-# Some PyTgCalls versions expect the old spelling
-# "GroupcallForbidden", while newer Pyrogram versions
-# use "GroupCallForbidden".
+try:
+    # Newer Pyrogram name
+    GroupCallForbidden = pyrogram.errors.GroupCallForbidden
 
-if not hasattr(pyrogram.errors, "GroupcallForbidden"):
-    if hasattr(pyrogram.errors, "GroupCallForbidden"):
-        pyrogram.errors.GroupcallForbidden = (
-            pyrogram.errors.GroupCallForbidden
-        )
+    # PyTgCalls expects the older spelling
+    pyrogram.errors.GroupcallForbidden = GroupCallForbidden
+
+except AttributeError:
+
+    # Fallback if neither exists
+    class GroupcallForbidden(Exception):
+        pass
+
+    pyrogram.errors.GroupcallForbidden = GroupcallForbidden
 
 
-# Import PyTgCalls AFTER the compatibility fix
+# Import AFTER compatibility patch
+from pyrogram import Client
 from pytgcalls import PyTgCalls
 
 
