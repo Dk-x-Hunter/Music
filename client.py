@@ -10,31 +10,43 @@ BOT_TOKEN = os.getenv("BOT_TOKEN", "")
 SESSION_STRING = os.getenv("SESSION_STRING", "")
 
 
-if not API_ID or not API_HASH:
-    raise RuntimeError("API_ID or API_HASH is missing")
+if not API_ID:
+    raise RuntimeError("❌ API_ID is missing")
+
+if not API_HASH:
+    raise RuntimeError("❌ API_HASH is missing")
 
 if not BOT_TOKEN:
-    raise RuntimeError("BOT_TOKEN is missing")
+    raise RuntimeError("❌ BOT_TOKEN is missing")
 
 if not SESSION_STRING:
-    raise RuntimeError("SESSION_STRING is missing")
+    raise RuntimeError("❌ SESSION_STRING is missing")
 
 
-# Bot account
+# Smart Plugins
+plugins = {
+    "root": "plugins"
+}
+
+
+# Telegram Bot
 app = Client(
     "music_bot",
     api_id=API_ID,
     api_hash=API_HASH,
     bot_token=BOT_TOKEN,
+    plugins=plugins
 )
 
-# User account used for voice chat
+
+# Telegram User Account
 user = Client(
     "music_user",
     api_id=API_ID,
     api_hash=API_HASH,
-    session_string=SESSION_STRING,
+    session_string=SESSION_STRING
 )
 
-# PyTgCalls uses the user account
+
+# Voice Chat client
 call = PyTgCalls(user)
