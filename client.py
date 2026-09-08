@@ -1,41 +1,49 @@
-import asyncio
-loop = asyncio.new_event_loop()
-asyncio.set_event_loop(loop)
-
-import logging
+import os
 
 from pyrogram import Client
 from pytgcalls import PyTgCalls
 
-import config
 
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger("musicbot")
+API_ID = int(os.getenv("API_ID", "0"))
+API_HASH = os.getenv("API_HASH")
+BOT_TOKEN = os.getenv("BOT_TOKEN")
+SESSION_STRING = os.getenv("SESSION_STRING")
 
-if not (config.API_ID and config.API_HASH and config.BOT_TOKEN and config.SESSION_STRING):
-    raise SystemExit(
-        "Missing config. Set API_ID, API_HASH, BOT_TOKEN, SESSION_STRING "
-        "as environment variables (see README.md)."
+
+if not API_ID or not API_HASH or not BOT_TOKEN or not SESSION_STRING:
+    raise RuntimeError(
+        "Missing required environment variables: "
+        "API_ID, API_HASH, BOT_TOKEN, SESSION_STRING"
     )
 
-# The bot users talk to (sends messages, receives commands)
+
+# Telegram bot
 app = Client(
-    "musicbot",
-    api_id=config.API_ID,
-    api_hash=config.API_HASH,
-    bot_token=config.BOT_TOKEN,
-    plugins=dict(root="plugins"),
+    "music_bot",
+    api_id=API_ID,
+    api_hash=API_HASH,
+    bot_token=BOT_TOKEN,
 )
 
-# The user account that actually joins the voice chat
+# Telegram user account
 user = Client(
-    "musicuser",
-    api_id=config.API_ID,
-    api_hash=config.API_HASH,
-    session_string=config.SESSION_STRING,
+    "music_user",
+    api_id=API_ID,
+    api_hash=API_HASH,
+    session_string=SESSION_STRING,
 )
 
+# Voice-chat client
 call = PyTgCalls(user)
 
-# Per-chat song queue: {chat_id: [ {title, url, requested_by}, ... ]}
-QUEUES = {}
+
+async def start_clients():
+    await app.start()
+    await user.start()
+    await call.start()
+
+
+async def stop_clients():
+    await call.stop()
+    await user.stop()
+    await app.stop()
