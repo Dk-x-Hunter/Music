@@ -1,12 +1,22 @@
-import logging
+from client import app, call
 
-from client import app, user, call
 
-logger = logging.getLogger("musicbot")
+async def main():
+    print("🎵 Music Bot is starting...")
+
+    await app.start()
+    await call.start()
+
+    me = await app.get_me()
+
+    print(f"✅ Bot started: @{me.username}")
+    print("🎧 PyTgCalls started")
+    print("🚀 Music bot is running...")
+
+    await app.idle()
+
 
 if __name__ == "__main__":
-    logger.info("Starting music bot...")
-    user.start()
-    call.start()
-    app.run()
-    logger.info("Bot stopped.")
+    import asyncio
+
+    asyncio.run(main())
