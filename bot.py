@@ -8,7 +8,7 @@ from client import app, user, call
 async def main():
     print("🎵 Starting Music Bot...")
 
-    # Start bot account
+    # Start bot
     await app.start()
     print("🤖 Bot started")
 
@@ -18,15 +18,15 @@ async def main():
 
     # Start PyTgCalls
     await call.start()
-    print("🎧 Voice Chat client started")
+    print("🎧 PyTgCalls started")
 
     me = await app.get_me()
     print(f"✅ Running as @{me.username or me.first_name}")
 
-    # Keep everything running
+    # Keep the bot alive
     await idle()
 
-    # Stop everything when the process exits
+    # Shutdown
     await call.stop()
     await user.stop()
     await app.stop()
