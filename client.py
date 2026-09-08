@@ -5,19 +5,22 @@ from pytgcalls import PyTgCalls
 
 
 API_ID = int(os.getenv("API_ID", "0"))
-API_HASH = os.getenv("API_HASH")
-BOT_TOKEN = os.getenv("BOT_TOKEN")
-SESSION_STRING = os.getenv("SESSION_STRING")
+API_HASH = os.getenv("API_HASH", "")
+BOT_TOKEN = os.getenv("BOT_TOKEN", "")
+SESSION_STRING = os.getenv("SESSION_STRING", "")
 
 
-if not API_ID or not API_HASH or not BOT_TOKEN or not SESSION_STRING:
-    raise RuntimeError(
-        "Missing required environment variables: "
-        "API_ID, API_HASH, BOT_TOKEN, SESSION_STRING"
-    )
+if not API_ID or not API_HASH:
+    raise RuntimeError("API_ID or API_HASH is missing")
+
+if not BOT_TOKEN:
+    raise RuntimeError("BOT_TOKEN is missing")
+
+if not SESSION_STRING:
+    raise RuntimeError("SESSION_STRING is missing")
 
 
-# Telegram bot
+# Bot account
 app = Client(
     "music_bot",
     api_id=API_ID,
@@ -25,7 +28,7 @@ app = Client(
     bot_token=BOT_TOKEN,
 )
 
-# Telegram user account
+# User account used for voice chat
 user = Client(
     "music_user",
     api_id=API_ID,
@@ -33,17 +36,5 @@ user = Client(
     session_string=SESSION_STRING,
 )
 
-# Voice-chat client
+# PyTgCalls uses the user account
 call = PyTgCalls(user)
-
-
-async def start_clients():
-    await app.start()
-    await user.start()
-    await call.start()
-
-
-async def stop_clients():
-    await call.stop()
-    await user.stop()
-    await app.stop()
