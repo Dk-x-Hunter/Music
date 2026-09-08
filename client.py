@@ -1,41 +1,66 @@
-import asyncio
-loop = asyncio.new_event_loop()
-asyncio.set_event_loop(loop)
+import os
 
-import logging
+# =========================
+# Required configuration
+# =========================
 
-from pyrogram import Client
-from pytgcalls import PyTgCalls
+API_ID = int(os.getenv("API_ID", "0"))
+API_HASH = os.getenv("API_HASH", "")
+BOT_TOKEN = os.getenv("BOT_TOKEN", "")
+SESSION_STRING = os.getenv("SESSION_STRING", "")
 
-import config
+# =========================
+# Ownership / access control
+# =========================
 
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger("musicbot")
+OWNER_ID = int(os.getenv("OWNER_ID", "0"))
 
-if not (config.API_ID and config.API_HASH and config.BOT_TOKEN and config.SESSION_STRING):
-    raise SystemExit(
-        "Missing config. Set API_ID, API_HASH, BOT_TOKEN, SESSION_STRING "
-        "as environment variables (see README.md)."
+# Comma-separated Telegram user IDs
+# Example: SUDO_USERS="123456789,987654321"
+SUDO_USERS = [
+    int(user_id.strip())
+    for user_id in os.getenv("SUDO_USERS", "").split(",")
+    if user_id.strip()
+]
+
+# =========================
+# Storage
+# =========================
+
+DB_FILE = os.path.join(
+    os.path.dirname(__file__),
+    "data.json"
+)
+
+# =========================
+# Clone system
+# =========================
+
+CLONE_ONLY_OWNER = os.getenv(
+    "CLONE_ONLY_OWNER",
+    "true"
+).lower() == "true"
+
+
+# =========================
+# Configuration validation
+# =========================
+
+required_values = {
+    "API_ID": API_ID,
+    "API_HASH": API_HASH,
+    "BOT_TOKEN": BOT_TOKEN,
+    "SESSION_STRING": SESSION_STRING,
+    "OWNER_ID": OWNER_ID,
+}
+
+missing = [
+    name for name, value in required_values.items()
+    if not value
+]
+
+if missing:
+    raise RuntimeError(
+        "Missing required environment variables: "
+        + ", ".join(missing)
     )
-
-# The bot users talk to (sends messages, receives commands)
-app = Client(
-    "musicbot",
-    api_id=config.API_ID,
-    api_hash=config.API_HASH,
-    bot_token=config.BOT_TOKEN,
-    plugins=dict(root="plugins"),
-)
-
-# The user account that actually joins the voice chat
-user = Client(
-    "musicuser",
-    api_id=config.API_ID,
-    api_hash=config.API_HASH,
-    session_string=config.SESSION_STRING,
-)
-
-call = PyTgCalls(user)
-
-# Per-chat song queue: {chat_id: [ {title, url, requested_by}, ... ]}
-QUEUES = {}
