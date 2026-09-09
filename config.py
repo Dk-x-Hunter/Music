@@ -1,31 +1,38 @@
 import os
 
-# Telegram API credentials
-API_ID = int(os.getenv("API_ID", "0"))
-API_HASH = os.getenv("API_HASH", "")
 
-# Telegram Bot Token
-BOT_TOKEN = os.getenv("BOT_TOKEN", "")
+def get_env(name: str, required: bool = True, default: str = "") -> str:
+    value = os.getenv(name, default)
 
-# Telegram User Session String
-SESSION_STRING = os.getenv("SESSION_STRING", "")
+    if required and not value:
+        raise RuntimeError(f"Missing required environment variable: {name}")
 
-# Your Telegram user ID
-OWNER_ID = int(os.getenv("OWNER_ID", "0"))
+    return value
 
 
-# Basic validation
-if not API_ID:
-    raise RuntimeError("API_ID is missing")
+# Telegram
+API_ID = int(get_env("API_ID"))
+API_HASH = get_env("API_HASH")
+BOT_TOKEN = get_env("BOT_TOKEN")
 
-if not API_HASH:
-    raise RuntimeError("API_HASH is missing")
+# Owner
+OWNER_ID = int(get_env("OWNER_ID"))
 
-if not BOT_TOKEN:
-    raise RuntimeError("BOT_TOKEN is missing")
+# Pyrogram assistant account
+SESSION_STRING = get_env("SESSION_STRING")
 
-if not SESSION_STRING:
-    raise RuntimeError("SESSION_STRING is missing")
+# MongoDB
+MONGO_DB_URI = get_env("MONGO_DB_URI")
 
-if not OWNER_ID:
-    raise RuntimeError("OWNER_ID is missing")
+# Logging
+LOGGER_ID = int(get_env("LOGGER_ID"))
+
+# YouTube cookies
+COOKIES_URL = get_env("COOKIES_URL", required=False)
+
+# Database name
+MONGO_DB_NAME = get_env(
+    "MONGO_DB_NAME",
+    required=False,
+    default="TelegramMusicBot",
+)
