@@ -1,8 +1,0 @@
-pyrogram
-tgcrypto
-pytgcalls
-pymongo[srv]
-yt-dlp
-aiohttp
-requests
-python-dotenv
